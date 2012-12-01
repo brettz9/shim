@@ -11,12 +11,12 @@ define({
             for (i = 0; i < pl; i++) {
                 ref = ref[props[i]];
             }
+            if (ref) {
+                load(true);
+                return;
+            }
         }
         catch(e) {
-        }
-        if (ref && i === pl) {
-            load(true);
-            return;
         }
 
         for (i = 0, pl--, ref = w; i < pl; i++) {

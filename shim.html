@@ -11,12 +11,12 @@ require(['domReady!'], function () {
     require(['writeBr', 'Object.keys'], function (writeBr, keysObj) {
         writeBr(!!Object.keys); // gives false in IE quirks mode, true in Firefox, etc.
         writeBr(keysObj({a: 1, b: 2})); // ['a','b']
-    });
 
-    // Same result but avoids addiitonal load of Object.keys.js file if an Object.keys implementation is already available
-    require(['writeBr', 'shim!Object.keys'], function (writeBr, alreadyExisted) { // No real need to use or specify the second argument
-        writeBr(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
-        writeBr(Object.keys({a: 1, b: 2})); // ['a','b']
+        // Same result but avoids addiitonal load of Object.keys.js file if an Object.keys implementation is already available
+        require(['writeBr', 'shim!Object.keys'], function (writeBr, alreadyExisted) { // No real need to use or specify the second argument
+            writeBr(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
+            writeBr(Object.keys({a: 1, b: 2})); // ['a','b']
+        });
     });
 
 });
