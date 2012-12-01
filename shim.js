@@ -1,6 +1,8 @@
+/*globals define*/
 // Should only be used with shims against standard behavior as normal modules should not set globals
 define({
     load: function (name, req, load, config) {
+        'use strict';
         var i, pl, ref = window, 
             props = name.split('.');
 

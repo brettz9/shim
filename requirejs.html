@@ -2,9 +2,12 @@
 <title>RequireJS shim plugin test</title>
 <script src="require.js"></script>
 <script>
-function displayChecks (writeBr, alreadyExisted) {
+/*globals require*/
+'use strict';
+
+function displayChecks(writeBr, alreadyExisted) {
     writeBr(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
-    writeBr(Object.keys({a:1,b:2})); // ['a','b']
+    writeBr(Object.keys({a: 1, b: 2})); // ['a','b']
 }
 
 require(['domReady!'], function () {

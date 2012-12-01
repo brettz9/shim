@@ -1,3 +1,4 @@
+/*globals define*/
 // As a shim plugin, this breaks normal modularity by altering globals for sake of enabling standards on non-supporting browsers
 // Adapted from https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/keys
 define(function () {
