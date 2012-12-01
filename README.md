@@ -1,4 +1,4 @@
 shim
 ====
 
-requirejs plugin providing conditional shim loading
+[requirejs](https://github.com/jrburke/requirejs/) plugin providing conditional shim loading
