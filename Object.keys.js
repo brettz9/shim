@@ -5,7 +5,7 @@ define(function () {
     'use strict';
 
     if (Object.keys) { // Better to use shim plugin to detect presence, as reusable for other shims
-        return true;
+        return Object.keys;
     }
         
     var hasOwnProperty = Object.prototype.hasOwnProperty,
@@ -21,7 +21,7 @@ define(function () {
         ],
         dontEnumsLength = dontEnums.length;
 
-    Object.keys = function (obj) {
+    return function (obj) {
         var i, prop, result = [];
         if ((typeof obj !== 'object' && typeof obj !== 'function') || obj === null) {
             throw new TypeError('Object.keys called on non-object');
