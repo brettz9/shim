@@ -30,7 +30,7 @@ require(['shim!Object.keys'],
 //   strings at the end of the require/define array to avoid needing to even define
 //   the argument(s).
 require(['someModule', 'shim!Object.keys'], 
-    function (someModule1) {
+    function (someModule) {
         someModule.doSomething();
         alert(Object.keys({a: 1, b: 2})); // ['a','b']
     }
