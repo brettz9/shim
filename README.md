@@ -71,7 +71,8 @@ require.config({
     config: {
         detect : {
             // If both of the following methods are present on Array,
-            //   the Array.js shim will not be loaded at all
+            //   the Array.js shim file will not be loaded as asserted
+            //   as not needed
             Array: ['slice', 'map']
         }
     }
