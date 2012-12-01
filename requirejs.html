@@ -1,0 +1,22 @@
+<html><head><meta charset="utf-8" />
+<title>RequireJS shim plugin test</title>
+<script src="../requirejs/require.js"></script>
+<script>
+function displayChecks (writeBr, alreadyExisted) {
+    writeBr(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
+    writeBr(Object.keys({a:1,b:2})); // ['a','b']
+}
+
+require(['domReady!'], function () {
+
+    // Avoids addiitonal load of Object.keys.js file if an Object.keys implementation is already available
+    require(['writeBr', 'shim!Object.keys'], displayChecks);
+
+    // Same result, but requires load of Object.keys
+    require(['writeBr', 'Object.keys'], displayChecks);
+
+});
+</script>
+</head>
+<body></body>
+</html>
