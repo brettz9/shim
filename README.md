@@ -2,7 +2,9 @@ shim
 ====
 
 [requirejs](https://github.com/jrburke/requirejs/) plugin providing conditional shim loading, 
-avoiding additional document loads when the feature is already detected as supported.
+avoiding additional document loads when the feature is already detected as supported. 
+Requires text ```shim!``` followed by file name (without ```.js```) where the latter must be 
+expressed exactly as the global reference to detect.
 
 Example
 ====
