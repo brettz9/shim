@@ -10,12 +10,29 @@ supported, create (and a module must be placed at `Object.keys.js`).
 The `Object.keys.js` module should define the property/method to be automatically set at the 
 supplied global file reference (e.g., the `Object.keys` function).
 
-Example
+Examples
 ====
 ```javascript
-// Avoids addiitonal load of Object.keys.js file if an Object.keys implementation is already available
-require(['shim!Object.keys'], function (alreadyExisted) {
-    alert(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
-    alert(Object.keys({a: 1, b: 2})); // ['a','b']
-});
+// We avoid addiitonal load of the Object.keys.js file if an Object.keys implementation is already available
+
+require(['shim!Object.keys'], 
+    //   We can include the argument "alreadyExisted" for demonstration of whether the browser already
+    //     had an implementation available to it, but should usually not be necessary
+    function (alreadyExisted) {
+        alert(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
+        alert(Object.keys({a: 1, b: 2})); // ['a','b']
+    }
+);
+```
+
+```javascript
+// The callback argument is not needed with shims; we can therefore supply all shim 
+//   strings at the end of the require/define array to avoid needing to even define
+//   the argument(s).
+require(['someModule', 'shim!Object.keys'], 
+    function (someModule1) {
+        someModule.doSomething();
+        alert(Object.keys({a: 1, b: 2})); // ['a','b']
+    }
+);
 ```
