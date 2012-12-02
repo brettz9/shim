@@ -4,7 +4,7 @@ define(function () {
         return {
         buildGeneric: function buildGeneric (method) {
             return function (arg1) {
-                return method.apply(arg1, method.call(arguments, 1));
+                return method.apply(arg1, Array.prototype.slice.call(arguments, 1));
             };
         },
         getGeneric: function getGeneric (obj, methodName) {
