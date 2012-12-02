@@ -1,6 +1,8 @@
 /*globals define*/
 // Todos: Incorporate 'of' and 'from' from http://calormen.com/polyfill/harmony.js
 //                while teasing out non-ECMAScript generics
+// Assumes Array extras already present (one may use Array.prototype
+//   shims for these first)
 // If allowing dynamic require, we could dynamically require these from
 //   separate files so dependent, though still wouldn't be able to use our
 //   current shim approach to define a group at once using the plug-in
