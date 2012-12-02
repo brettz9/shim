@@ -21,7 +21,7 @@ define(['generics', 'shim!Array.prototype.forEach'], function (generics) {
             return chars.join("");
         }
     };
-    // We can also build the array of methods with the following, but the 
+    // We could also build the array of methods with the following, but the
     //   getOwnPropertyNames() method is non-shimable:
     // Object.getOwnPropertyNames(String).filter(function (methodName) {return typeof String[methodName] === 'function'});
     [
