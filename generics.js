@@ -1,10 +1,10 @@
 /*globals define*/
-define(function () {
+define(['shim!Array.from'], function () {
     'use strict';
         return {
         buildGeneric: function buildGeneric (method) {
             return function (arg1) {
-                return method.apply(arg1, Array.prototype.slice.call(arguments, 1));
+                return method.apply(arg1, Array.from(arguments).slice(1));
             };
         },
         getGeneric: function getGeneric (obj, methodName) {
