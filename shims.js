@@ -1,6 +1,6 @@
 /*globals define*/
 // Should only be used with shims against standard behavior as normal modules should not set globals
-define(['shim!Array.prototype.every'], {
+define(['shim!Array', 'shim!Array.prototype.every'], {
     load: function (name, req, load, config) {
         'use strict';
         var i, prop, avoidLoad, w = window, ref = w,
@@ -13,19 +13,24 @@ define(['shim!Array.prototype.every'], {
             methodChecks = args.slice(1),
             ml = methodChecks.length,
             typeCheck = function (detect, ref) {
-                var detectType = typeof detect;
-                return (detect && detectType === 'object') ?
-                        (detect.detect ?
-                            typeCheck(detect.detect, ref) :
-                            detect.every(function (method) {
+                var ret, detectType = typeof detect;
+                switch (detectType) {
+                    case 'boolean':
+                        return detect;
+                    case 'string':
+                        return ref[detect];
+                    case 'function':
+                        return detect(ref);
+                    case 'object':
+                        return detect && (Array.isArray(detect) ?
+                            (detect.every(function (method) {
                                 return ref[method];
-                            })
-                        ) :
-                        (detectType === 'boolean' ?
-                            detect :
-                            (detectType === 'string' ?
-                                ref[detect] :
-                                (detectType === 'function' ? detect(ref) : false)));
+                            })) :
+                            (detect.detect ? typeCheck(detect.detect, ref) : false)
+                        );
+                    default:
+                        return false;
+                }
             };
 
         if (ml || detect) {
