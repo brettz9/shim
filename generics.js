@@ -17,8 +17,7 @@ define(function () {
             return this.getGeneric(String, methodName);
         },
         assignGeneric: function assignGeneric (obj, methodName) {
-            var method = obj.prototype[methodName];
-            obj[methodName] = this.getGeneric(method);
+            obj[methodName] = this.getGeneric(obj, methodName);
         },
         assignArrayGeneric: function assignArrayGeneric (methodName) {
             this.assignGeneric(Array, methodName);
