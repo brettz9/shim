@@ -16,7 +16,7 @@ supplied global file reference (e.g., the `Object.keys` function).
 Example 1
 ====
 ```javascript
-// We avoid addiitonal load of the Object.keys.js file if an Object.keys implementation is already available
+// We avoid additional load of the Object.keys.js file if an Object.keys implementation is already available
 
 require(['shim!Object.keys'], 
     //   We can include the argument "alreadyExisted" for demonstration of whether the browser already
@@ -40,6 +40,8 @@ require(['someModule', 'shim!Object.keys'],
     }
 );
 ```
+Example 3
+====
 
 For convenience, another plugin is provided to allow loading of
 multiple shims at once, requiring the text `shims!` followed by a
@@ -48,9 +50,6 @@ file name as with `shim!` above, but also allowing subsequent
 method name that is required to avoid loading the whole set of
 shims (since we need to know which item to check to avoid loading the
 file).
-
-Example 3
-====
 
 ```javascript
 // We assume we can avoid addiitonal load of Array methods if map is already available
