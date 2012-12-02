@@ -4,7 +4,9 @@ define({
     load: function (name, req, load, config) {
         'use strict';
         var i, prop, w = window, ref = w,
-            props = name.split('.'),
+            alias = name.split('@'),
+            variable = alias[0],
+            props = variable.split('.'),
             pl = props.length;
 
         try {
@@ -27,7 +29,7 @@ define({
             ref = ref[prop];
         }
 
-        req([name], function (value) {
+        req([alias[1] || variable], function (value) {
             ref[props[i]] = value;
             load(false);
         });

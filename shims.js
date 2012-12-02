@@ -7,8 +7,9 @@ define(['shim!Array', 'shim!Array.prototype.every'], {
             cfg = config.config,
             detect = cfg && cfg.detect,
             args = name.split('!'),
-            shimName = args[0],
-            props = shimName.split('.'),
+            alias = args[0].split('@'),
+            variable = alias[0],
+            props = variable.split('.'),
             pl = props.length,
             methodChecks = args.slice(1),
             ml = methodChecks.length,
@@ -69,7 +70,7 @@ define(['shim!Array', 'shim!Array.prototype.every'], {
             ref = ref[prop];
         }
 
-        req([name], function (obj) {
+        req([alias[1] || variable], function (obj) {
             for (prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
                     ref[prop] = obj[prop];
