@@ -1,6 +1,7 @@
+/*globals define*/
 define(function () {
+    'use strict';
     return function map (callback, thisArg) {
-        'use strict';
         var T, A, k, kValue, mappedValue, O, len;
         if (this === null || typeof this === 'undefined') {
             throw new TypeError(" this is null or not defined");
