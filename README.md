@@ -99,3 +99,26 @@ require(['writeBr', 'shims!Array@ArrayGenerics'], function (writeBr) {
     writeBr(Array.slice([3, 4, 5, 6], 2)); // [5, 6]
 });
 ```
+
+Browserify
+========
+
+For users of browserify, I have added a very simple browserify transforming plugin
+to convert require('!shim...') statements into checks for existence of the global and conditional
+require-based usage of the shim
+
+```browserify -t shimify main.js > bundle.js```
+
+There are a number of shortcomings (pull requests welcome!):
+1. The real shim file (assuming it is needed) is always assumed to be within the "./shims/" path. (If browserify transformations can accept additional (config) arguments, we might accept the same format as used in the RequireJS AMD shim plugin.
+2. There is not a lot of checking about the context when replacing `require(!shim...)` statements (if the statement is added where the previous line is a function missing an ending semicolon?) which could cause errors.
+3. The syntax does not support all features of the RequireJS shim plugin syntax
+
+I would also like to add an option to strip `require('!shim...')'` entirely without disturbing line numbers (e.g., to use in browser (or Node) which doesn't need shim code loaded or checked) and an option to convert to a genuine require without first checking whether the global exists or not (e.g., for IE-only (conditional-comment-loaded) shim file where one knows that the global is missing).
+
+(I'd also like to make such an equivalent plugin for [AsYouWish](https://github.com/brettz9/asyouwish/wiki/Developer-Guidelines#requirejs-priv-plugin) to support another needed-in-the-browser-but-not-the-server need.)
+
+Todos
+=====
+
+1. Ensure works in Node RequireJS
