@@ -109,10 +109,26 @@ require-based usage of the shim
 
 ```browserify -t shimify main.js > bundle.js```
 
+...which will convert:
+
+```javascript
+// Currently requires separate requires for each shim (see below)
+require('shim!Array.prototype.indexOf');
+require('shim!ArrayBuffer');
+```
+
+...into:
+```javascript
+!Array.prototype.indexOf ? require('./shims/Array.prototype.indexOf') : '';
+typeof ArrayBuffer !== 'undefined' ? require('./shims/ArrayBuffer') : '';
+```
+
 There are a number of shortcomings (pull requests welcome!):
 1. The real shim file (assuming it is needed) is always assumed to be within the "./shims/" path. (If browserify transformations can accept additional (config) arguments, we might accept the same format as used in the RequireJS AMD shim plugin.
 2. There is not a lot of checking about the context when replacing `require(!shim...)` statements (if the statement is added where the previous line is a function missing an ending semicolon?) which could cause errors.
 3. The syntax does not support all features of the RequireJS shim plugin syntax
+4. Does not currently check for each component's existence (e.g., checking "Array.prototype.indexOf" does not first verify Array.prototype exists).
+5. I have not allowed the require to accept an array of shims even though the transformer could handle it; I first want to see whether it is possible to overload the built-in Node require and if so, whether it can handle the array format.
 
 I would also like to add an option to strip `require('!shim...')'` entirely without disturbing line numbers (e.g., to use in browser (or Node) which doesn't need shim code loaded or checked) and an option to convert to a genuine require without first checking whether the global exists or not (e.g., for IE-only (conditional-comment-loaded) shim file where one knows that the global is missing).
 
