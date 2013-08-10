@@ -1,6 +1,6 @@
 /*globals define*/
 
-define(['generics', 'shim!Array.prototype'], function (generics) {
+define(['shimHelpers/generics', 'shim!Array.prototype'], function (generics) {
     'use strict';
     var $Array = {};
     // We could also build the array of methods with the following, but the

@@ -3,7 +3,7 @@ define(function () {
     'use strict';
     return function map (callback, thisArg) {
         var T, A, k, kValue, mappedValue, O, len;
-        if (this === null || typeof this === 'undefined') {
+        if (this === null || this === undefined) {
             throw new TypeError(" this is null or not defined");
         }
         O = Object(this);
