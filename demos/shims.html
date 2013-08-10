@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html><head><meta charset="utf-8" />
 <title>RequireJS shim plugin test</title>
 <script src="require.js"></script>
@@ -6,7 +7,7 @@
 
 require.config({
     config: {
-        detect : {
+        shim : { // IMPORTANT: This "shim" property must be INSIDE the config property, not directly inside the config call!
             Array: {
                 // 'prototype': 'map' // Can also use a string to indicate
                 // method to check to allow all to be added (or require
@@ -17,9 +18,9 @@ require.config({
                     return obj.map;
                 },
                 // For objects already holding properties (as above), we
-                //   can use "detect" also with a string, boolean, array, or
+                //   can use "shim" also with a string, boolean, array, or
                 //   function
-                detect: ['slice', 'map']
+                shim: ['slice', 'map']
             }
         }
     }

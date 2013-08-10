@@ -5,10 +5,13 @@ define(['shim!Array', 'shim!Array.prototype.every'], {
         'use strict';
         var i, prop, avoidLoad, w = window, ref = w,
             cfg = config.config,
-            detect = cfg && cfg.detect,
+            shim = cfg && cfg.shim,
             args = name.split('!'),
-            alias = args[0].split('@'),
-            variable = alias[0],
+            aliased = args[0].split('@'),
+            path = aliased[0],
+            alias = aliased[1],
+            module = alias || path,
+            variable = alias ? path : path.split('/').slice(-1)[0],
             props = variable.split('.'),
             pl = props.length,
             methodChecks = args.slice(1),
@@ -27,21 +30,21 @@ define(['shim!Array', 'shim!Array.prototype.every'], {
                             (detect.every(function (method) {
                                 return ref[method];
                             })) :
-                            (detect.detect ? typeCheck(detect.detect, ref) : false)
+                            (detect.shim ? typeCheck(detect.shim, ref) : false)
                         );
                     default:
                         return false;
                 }
             };
 
-        if (ml || detect) {
+        if (ml || shim) {
             try {
                 for (i = 0; i < pl; i++) {
                     try {
-                        detect = detect[props[i]];
+                        shim = shim[props[i]];
                     }
                     catch (e2) {
-                        detect = false;
+                        shim = false;
                     }
                     ref = ref[props[i]];
                 }
@@ -49,8 +52,8 @@ define(['shim!Array', 'shim!Array.prototype.every'], {
                 for (i = 0, avoidLoad = true; i < ml; i++) { // Allow style "shim!Array!slice"
                     avoidLoad &= !!ref[methodChecks[i]];
                 }
-                if (!ml && detect) { // Give a chance for config to handle
-                    avoidLoad = typeCheck(detect, ref);
+                if (!ml && shim) { // Give a chance for config to handle
+                    avoidLoad = typeCheck(shim, ref);
                 }
 
                 if (avoidLoad) {
@@ -70,7 +73,7 @@ define(['shim!Array', 'shim!Array.prototype.every'], {
             ref = ref[prop];
         }
 
-        req([alias[1] || variable], function (obj) {
+        req([module], function (obj) {
             for (prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
                     ref[prop] = obj[prop];
