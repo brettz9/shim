@@ -1,5 +1,4 @@
-shim
-====
+# shim
 
 [requirejs](https://github.com/jrburke/requirejs/) plugin providing
 conditional shim loading, avoiding additional document loads
@@ -13,8 +12,10 @@ The `Object.keys.js` module should define the
 property/method to be automatically set at the
 supplied global file reference (e.g., the `Object.keys` function).
 
-Example 1
-====
+# Examples
+
+## Example 1
+
 ```javascript
 // We avoid additional load of the Object.keys.js file if an Object.keys implementation is already available
 
@@ -27,8 +28,9 @@ require(['shim!Object.keys'],
     }
 );
 ```
-Example 2
-====
+
+## Example 2
+
 ```javascript
 // The callback argument is not needed with shims; we can therefore supply all shim 
 //   strings at the end of the require/define array to avoid needing to even define
@@ -40,8 +42,8 @@ require(['someModule', 'shim!Object.keys'],
     }
 );
 ```
-Example 3
-====
+
+## Example 3
 
 For convenience, another plugin is provided to allow loading of
 multiple shims at once, requiring the text `shims!` followed by a
@@ -57,8 +59,8 @@ require(['writeBr', 'shims!Array.prototype!map'], function (writeBr) {
     writeBr([3, 4, 5, 6].map(function (i) {return i > 4;})); // [false, false, true, true]
 });
 ```
-Example 4
-====
+
+## Example 4
 
 As an alternative means of avoiding loading of the multiple
 shim file, `require.config` can be called with the `config` property
@@ -100,8 +102,7 @@ require(['writeBr', 'shims!Array@ArrayGenerics'], function (writeBr) {
 });
 ```
 
-Browserify
-========
+# Browserify
 
 For users of browserify, I have added a very simple browserify transforming plugin
 to convert require('!shim...') statements into checks for existence of the global and conditional
@@ -124,6 +125,7 @@ typeof ArrayBuffer !== 'undefined' ? require('./shims/ArrayBuffer') : '';
 ```
 
 There are a number of shortcomings (pull requests welcome!):
+
 1. The real shim file (assuming it is needed) is always assumed to be within the "./shims/" path. (If browserify transformations can accept additional (config) arguments, we might accept the same format as used in the RequireJS AMD shim plugin.
 2. There is not a lot of checking about the context when replacing `require(!shim...)` statements (if the statement is added where the previous line is a function missing an ending semicolon?) which could cause errors.
 3. The syntax does not support all features of the RequireJS shim plugin syntax
@@ -134,17 +136,17 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 
 (I'd also like to make such an equivalent plugin for [AsYouWish](https://github.com/brettz9/asyouwish/wiki/Developer-Guidelines#requirejs-priv-plugin) to support another needed-in-the-browser-but-not-the-server need.)
 
-Todos
-=====
+# Todos
+
 1. Modify or reconcile shims with shim including alias/detection behavior (just add a special character at end to get shims behavior?); how to address for npm?
 1. Ensure shim plugin works in Node RequireJS
 1. Start populating shims at the polyfill wiki and npm! (including latest Array.prototype.slice work or any other gist/desktop shim work); add to separate repo indicating strict rules so this plugin size can be small and itself modular?
 
-Possible todos
-============
+# Possible todos
+
 1. Support npm-friendly conversion since useful to host browser shims there for easy install but upper-case and dots are not allowed in the file names we use for auto-detection? (The plugin would also need to be changed to look inside the node_modules directory)
 1. Add other autoNamespace types (e.g., Array/prototype/map.js, Array/prototype.map.js) in addition to the existing default type (Array.prototype.map.js) and to the one-level nesting autoNamespace === 'main' type (Array/Array.prototype.map.js)
 
-Rejected ideas
-============
+# Rejected ideas
+
 1. Auto-namepsace aliases (using the path portion). While this might be convenient in some cases (e.g., to reference array generics in an Array folder without repeating "Array" in the alias portion), one should have the freedom to store them elsewhere (e.g., in a "generics" folder outside of the shim folder), and one might not expect changes to an alias anyways.
