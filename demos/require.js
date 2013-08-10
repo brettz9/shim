@@ -8,6 +8,8 @@
 /*jslint regexp: true, nomen: true, sloppy: true */
 /*global window, navigator, document, importScripts, jQuery, setTimeout, opera */
 
+// Modifications marked as by "brettz9" below (for easier debugging)
+
 var requirejs, require, define;
 (function (global) {
     var req, s, head, baseElement, dataMain, src,
@@ -191,7 +193,7 @@ var requirejs, require, define;
      * @returns {Error}
      */
     function makeError(id, msg, err, requireModules) {
-        var e = new Error(msg + '\nhttp://requirejs.org/docs/errors.html#' + id);
+        var e = new Error(msg + '\nhttp://requirejs.org/docs/errors.html#' + id + '\n' + (!err ? err : (err.target ? err.target : err.srcElement).src)); // brettz9 modified
         e.requireType = id;
         e.requireModules = requireModules;
         if (err) {

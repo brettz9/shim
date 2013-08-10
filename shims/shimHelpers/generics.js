@@ -1,7 +1,7 @@
 /*globals define*/
 define(['shim!Array.from'], function () {
     'use strict';
-        return {
+    return {
         buildGeneric: function buildGeneric (method) {
             return function (arg1) {
                 return method.apply(arg1, Array.from(arguments).slice(1));

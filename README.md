@@ -74,10 +74,10 @@ cases when there is already a child property set--see the
 example in `shims.html`).
 
 Notice that the following example also demonstrates an ability
-to add an ampersand (`@`) immediately after the variable name
-in order to specify a (differently-named) module. This may be
-especially useful in cases where there may be multiple shim
-groups one may wish to load on a given variable (as opposed to
+to add an alias (via an ampersand (`@`) immediately after the
+variable name) in order to specify a (differently-named) module.
+This may be especially useful in cases where there may be multiple
+shim groups one may wish to load on a given variable (as opposed to
 just multiple shims), such as when seeking to load both the
 `Array` class methods (e.g., `Array.isArray`) as well as
 Array generics. Multiple groups are desirable here because
@@ -136,5 +136,15 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 
 Todos
 =====
+1. Modify or reconcile shims with shim including alias/detection behavior (just add a special character at end to get shims behavior?); how to address for npm?
+1. Ensure shim plugin works in Node RequireJS
+1. Start populating shims at the polyfill wiki and npm! (including latest Array.prototype.slice work or any other gist/desktop shim work); add to separate repo indicating strict rules so this plugin size can be small and itself modular?
 
-1. Ensure works in Node RequireJS
+Possible todos
+============
+1. Support npm-friendly conversion since useful to host browser shims there for easy install but upper-case and dots are not allowed in the file names we use for auto-detection? (The plugin would also need to be changed to look inside the node_modules directory)
+1. Add other autoNamespace types (e.g., Array/prototype/map.js, Array/prototype.map.js) in addition to the existing default type (Array.prototype.map.js) and to the one-level nesting autoNamespace === 'main' type (Array/Array.prototype.map.js)
+
+Rejected ideas
+============
+1. Auto-namepsace aliases (using the path portion). While this might be convenient in some cases (e.g., to reference array generics in an Array folder without repeating "Array" in the alias portion), one should have the freedom to store them elsewhere (e.g., in a "generics" folder outside of the shim folder), and one might not expect changes to an alias anyways.
