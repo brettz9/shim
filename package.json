@@ -20,7 +20,8 @@
         "browserify"
     ],
     "dependencies": {
-        "requirejs": "*"
+        "requirejs": "*",
+        "amdefine": ">=0.0.8"
     },
     "license": "MIT",
     "engine": {
