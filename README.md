@@ -186,7 +186,7 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 1. Merge shims into shim including alias/detection behavior (need to add a special character at end to get shims behavior?); configuration or other way to avoid creating namespace objects (e.g., if access could cause error or behavior like window.location?); ensure detection (as with generics) works on Node (with amdefine)
 
 1. Support npm-constrained file name conversion since useful to host browser shims with npm for easy install but upper-case and dots are not allowed in the file names we use for auto-detection. (The plugin would probably also need to be changed to look inside the node_modules directory)
-1. Start populating shims at the polyfill wiki (adapting structure for amd and also browserify/shimify plugin?) and npm (adapting file names)! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
+1. Start populating shims at the polyfill wiki and explaining the approach/advantages (adapting structure for amd and also browserify/shimify plugin?) and npm (adapting file names)! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
 
 # Possible todos
 
