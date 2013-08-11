@@ -140,7 +140,7 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 
 1. Merge shims into shim including alias/detection behavior (need to add a special character at end to get shims behavior?)
 1. Ensure shim plugin works in Node RequireJS
-1. Start populating shims at the polyfill wiki and npm! (including latest Array.prototype.slice work or any other gist/desktop shim work); add to separate repo indicating strict rules so this plugin size can be small and itself modular?
+1. Start populating shims at the polyfill wiki and npm! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
 
 # Possible todos
 

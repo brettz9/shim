@@ -30,11 +30,11 @@ require(['domReady!'], function () {
     'use strict';
 
     // We assume we can avoid addiitonal load of Array methods if map is already available
-    require(['writeBr', 'shims!Array.prototype'], function (writeBr, alreadyExisted) { // No real need to use or specify the second argument
+    require(['writeBr', 'shims!Array.prototype'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
         writeBr(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
         writeBr([3, 4, 5, 6].map(function (i) {return i > 4;})); // [false, false, true, true]
 
-        require(['writeBr', 'shims!Array@ArrayGenerics'], function (writeBr, alreadyExisted) { // No real need to use or specify the second argument
+        require(['writeBr', 'shims!Array@ArrayGenerics'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
             writeBr(alreadyExisted); // gives false in IE quirks mode, true in Firefox, etc.
             writeBr(Array.slice([3, 4, 5, 6], 2)); // [5, 6]
         });
