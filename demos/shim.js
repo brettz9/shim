@@ -22,7 +22,6 @@ define({
                 path.split('/').slice(-1)[0],
             props = variable.split('.'),
             pl = props.length;
-            alert(module);
 
         try {
             for (i = 0; i < pl; i++) {
