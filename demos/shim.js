@@ -5,7 +5,7 @@ define(function () {
     var shimPattern = /^([^.]*?)([^\/.]*)(\..*)$/;
     return {
         load: function (name, req, load, config) {
-            var i, prop, module, variable, props, pl, replacer,
+            var i, prop, module, variable, props, pl, replacer, actualPath,
                 w = window, ref = w,
                 shimConfig = (config.config && config.config.shim) || {},
                 shimBaseUrl = (shimConfig.$baseUrl || 'shims').replace(/([^\/])$/, '$1/'), // We want this relative to the main module path (todo: see if https://github.com/jrburke/requirejs/issues/844 prompts support for separating the plugin baseUrl and module baseUrl, in which case use the module one)
@@ -15,7 +15,7 @@ define(function () {
                 shimPathHasProtocol = shimBaseUrl.indexOf(':') > -1,
                 shimAbsolutePath = shimBaseUrl.charAt() === '/';
 
-            if (!alias) {
+            if (!alias) { // NOTE: If file size starts becoming a concern, we could scale back on the allowable values to just allow $pathDepth of "one" + $fileFormat of "full" (or revert back to a single autoNamespace variable); but this approach more flexibility to directory structure
                 // Using example, "shim!Array.prototype.map", transform later to the file path...
                 switch (shimConfig.$pathDepth) {
                     case 'one':
@@ -56,14 +56,14 @@ define(function () {
                         break;
                 }
             }
-            path = path.replace(shimPattern, replacer);
+            actualPath = path.replace(shimPattern, replacer);
 
             module = (
                 (shimPathHasProtocol || shimAbsolutePath) ?
                     shimBaseUrl :
                     config.baseUrl + // .replace(/^\//, '')) + // config.baseUrl gets a trailing slash auto-added
                         shimBaseUrl
-            ) + (alias || path) + (shimPathHasProtocol || shimAbsolutePath ? '.js' : '');
+            ) + (alias || actualPath) + (shimPathHasProtocol || shimAbsolutePath ? '.js' : '');
             variable = alias ? path : // No need to split up the path if an alias file is being used as the "path" should really just be properties
                 path.split('/').slice(-1)[0];
             props = variable.split('.');
