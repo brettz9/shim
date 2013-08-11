@@ -17,7 +17,7 @@ define(['shim!Array', 'shim!Array.prototype.every'], {
             methodChecks = args.slice(1),
             ml = methodChecks.length,
             typeCheck = function (detect, ref) {
-                var ret, detectType = typeof detect;
+                var detectType = typeof detect;
                 switch (detectType) {
                     case 'boolean':
                         return detect;
