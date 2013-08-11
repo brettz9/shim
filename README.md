@@ -145,16 +145,30 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 
 (I'd also like to make such an equivalent plugin for [AsYouWish](https://github.com/brettz9/asyouwish/wiki/Developer-Guidelines#requirejs-priv-plugin) to support another needed-in-the-browser-but-not-the-server need.)
 
+# Configuration options
+
+`$baseUrl`: Set to a path such as "../shims". Defaults to "./shims" (a "shims" folder within the main baseUrl). If the path is suspected to have a protocol (by the presence of a colon character) or be an absolute path (by having a "/" at the beginning), the alias or path supplied with the `require([!shim...])` call will be appended along with ".js". Otherwise, the main config.baseUrl will be used and the shim $baseUrl appended to it.
+
+A trailing "/" is allowed but not required.
+
+`$pathDepth`: Set to "one" or "full" for an automatic file path namespacing; if set to "one", it will take the top-level parent object. For example, if the property is "Array.prototype.map" (e.g., `require(['shim!Array.prototype.map'])`) the shim plugin will look within a folder of the name "Array" for the file (as determined by $fileFormat which defaults to the full form, i.e., "Array.prototype.map.js") so it will look for a shim at "Array/Array.prototype.map.js".
+
+If set to "full", the automatic namespacing of the parent objects will be as deep as possible; using our previous example, it would lead to "Array/prototype/Array.prototype.map.js". One can leave off this property or set it to 'none' or 'default' to indicate no change from the default lack of automatic file path namespacing.
+
+If you already have a path prefix and apply this property, it will insert the automated path addition after your directory path. For example, if using `$pathDepth` set to "full" for `require(['shim!myShims/Array.prototype.map']);`, the resultant path would be: `myShims/Array/prototype/Array.prototype.map.js`.
+
+If an alias is set, this property will be ignored.
+
+`$fileFormat`: Must be set with `$pathDepth` to take effect. Set to "remainder", "full", or if $pathDepth is "full", it can also be set to "index". Defaults to "full". If set to "full", the file is expected to include the full object portion of the file name (e.g., "Array.prototype.map.js"). If set to "remainder", the file name should drop the previous paths automatically namespaced by the $pathDepth property. For example, if $pathDepth had been "full", a $fileFormat of "remainder" would cause the plugin to look for a file name "map.js", whereas if the $pathDepth had been "one", a $fileFormat of "remainder" would cause the plugin to look for a file name "prototype.map.js".
+
+If an alias is set, this property will be ignored.
+
 # Todos
 
+1. Support npm-constrained file name conversion since useful to host browser shims with npm for easy install but upper-case and dots are not allowed in the file names we use for auto-detection. (The plugin would probably also need to be changed to look inside the node_modules directory)
 1. Merge shims into shim including alias/detection behavior (need to add a special character at end to get shims behavior?); configuration or other way to avoid creating namespace objects (e.g., if access could cause error or behavior like window.location?)
 1. Ensure shim plugin works in Node RequireJS
-1. Start populating shims at the polyfill wiki and npm! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
-
-# Possible todos
-
-1. Support npm-constrained file name conversion since useful to host browser shims with npm for easy install but upper-case and dots are not allowed in the file names we use for auto-detection. (The plugin would probably also need to be changed to look inside the node_modules directory)
-1. Add other autoNamespace formats (e.g., Array/prototype/map.js, Array/prototype.map.js) in addition to the existing default format (Array.prototype.map.js) and to the one-level nesting autoNamespace === 'main' format (Array/Array.prototype.map.js)
+1. Start populating shims at the polyfill wiki (adapting structure for amd) and npm (adapting file names)! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
 
 # Rejected ideas
 
