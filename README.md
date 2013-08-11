@@ -171,6 +171,10 @@ If an alias is set, this property will be ignored.
 1. Support npm-constrained file name conversion since useful to host browser shims with npm for easy install but upper-case and dots are not allowed in the file names we use for auto-detection. (The plugin would probably also need to be changed to look inside the node_modules directory)
 1. Start populating shims at the polyfill wiki (adapting structure for amd) and npm (adapting file names)! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
 
+# Possible todos
+
+1. Work with optimizer to either ensure all shim files are included in case they are needed or made browser-specific (or relegate to IE conditional comments--a block which might be auto-built).
+
 # Rejected ideas
 
 1. Apply autoNamepsace to aliases (using the path portion). While this might be convenient in some cases (e.g., to reference array generics in an Array folder without repeating "Array" in the alias portion), one should have the freedom to store them elsewhere (e.g., in a "generics" folder outside of the shim folder), and one might not expect changes to an alias anyways.
