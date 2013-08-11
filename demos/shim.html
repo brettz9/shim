@@ -3,6 +3,8 @@
 <title>RequireJS shim plugin test</title>
 <script src="require.js"></script>
 <script src="require-config.js"></script><!-- The needed shim configuration code is minimal, so we could also include it below -->
+
+<!-- First we'll just do a normal demo -->
 <script>
 /*globals require */
 require(['domReady!'], function () {
@@ -21,14 +23,16 @@ require(['domReady!'], function () {
                 writeBr(alreadyExisted); // gives false in IE < 9, true in Firefox, etc.
                 writeBr([3, 4, 5, 6].map(function (i) {return i > 4;})); // [false, false, true, true]
 
-                require(['shim!Array.slice@Array/ArrayGenerics'], function (alreadyExisted) { // No real need to use or specify the alreadyExisted argument
+                /*require(['shim!Array.slice@Array/ArrayGenerics'], function (alreadyExisted) { // No real need to use or specify the alreadyExisted argument
                     writeBr(Array.slice([3, 4, 5, 6], 2)); // [5, 6]
-                });
+                });*/
             });
         });
     });
 });
 </script>
+<!--Now we'll test some cross-environment code -->
+<script src="nodeTest.js"></script>
 </head>
 <body></body>
 </html>

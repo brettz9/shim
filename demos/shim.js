@@ -6,7 +6,7 @@ define(function () {
     return {
         load: function (name, req, load, config) {
             var i, prop, module, variable, props, pl, replacer, actualPath,
-                w = window, ref = w,
+                w = typeof window === 'undefined' ? global : window, ref = w,
                 shimConfig = (config.config && config.config.shim) || {},
                 shimBaseUrl = (shimConfig.$baseUrl || 'shims').replace(/([^\/])$/, '$1/'), // We want this relative to the main module path (todo: see if https://github.com/jrburke/requirejs/issues/844 prompts support for separating the plugin baseUrl and module baseUrl, in which case use the module one)
                 aliased = name.split('@'),
