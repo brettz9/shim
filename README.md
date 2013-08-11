@@ -5,12 +5,21 @@ conditional shim loading, avoiding additional document loads
 when the feature is already detected as supported. Requires
 the text `shim!` followed by a file name (without `.js`) where the
 latter (e.g., `Object.keys`) must be expressed exactly as the
-global reference to detect, and if not supported, create (and
+global reference to detect, and if not supported, created (and
 a module must be placed at `Object.keys.js`).
 
 The `Object.keys.js` module should define the
 property/method to be automatically set at the
 supplied global file reference (e.g., the `Object.keys` function).
+
+Note that the shim plugin will automatically create objects at each
+level if not already supported (e.g., it would have defined `Object` as
+`{}` had it not already been defined). Note that for some shims,
+such as if you were attempting to shim DOM prototypes, like
+Element.prototype or Node.prototype, the plugin may appear
+to create the object successfully, but it will not work properly if
+used in an older browser like IE7 which does not have nor utilize the
+Element prototype.
 
 # Examples
 
@@ -138,7 +147,7 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 
 # Todos
 
-1. Merge shims into shim including alias/detection behavior (need to add a special character at end to get shims behavior?)
+1. Merge shims into shim including alias/detection behavior (need to add a special character at end to get shims behavior?); configuration or other way to avoid creating namespace objects (e.g., if access could cause error or behavior like window.location?)
 1. Ensure shim plugin works in Node RequireJS
 1. Start populating shims at the polyfill wiki and npm! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
 
