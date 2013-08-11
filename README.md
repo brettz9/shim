@@ -2,11 +2,15 @@
 
 [requirejs](https://github.com/jrburke/requirejs/) plugin providing
 conditional shim loading, avoiding additional document loads
-when the feature is already detected as supported. Requires
-the text `shim!` followed by a file name (without `.js`) where the
-latter (e.g., `Object.keys`) must be expressed exactly as the
-global reference to detect, and if not supported, created (and
-a module must be placed at `Object.keys.js`).
+when the feature is already detected as supported and providing
+modularity as with other AMD modules as far as not needing to
+add additional script tags or embed shim code within one's modules
+beyond identifying the required shims.
+
+Requires the text `shim!` followed by a file name (without `.js`)
+where the latter (e.g., `Object.keys`) must be expressed exactly
+as the global reference to detect, and if not supported,
+created (and a module must be placed at `Object.keys.js`).
 
 The `Object.keys.js` module should define the
 property/method to be automatically set at the
