@@ -21,7 +21,9 @@
     ],
     "dependencies": {
         "requirejs": "*",
-        "amdefine": ">=0.0.8"
+        "amdefine": ">=0.0.8",
+        "browserify": "*",
+        "through": "*"
     },
     "license": "MIT",
     "engine": {

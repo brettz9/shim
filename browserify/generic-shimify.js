@@ -14,15 +14,15 @@ var through = require('through');
 */
 function replacer (n0, initialChars, q, shimName, q2) {
     return initialChars +
-        shimName.indexOf('.') !== shimName.lastIndexOf('.') ?
+        (shimName.indexOf('.') !== shimName.lastIndexOf('.') ?
             ('!' + shimName) : // We could build a check for each component
-            ('typeof ' + shimName + " !== 'undefined'") +
+            ('typeof ' + shimName + " === 'undefined'")) +
         ' ? require(' + q + './shims/' + shimName + q2 + ") : ''";
 }
 
 /**
 * Simple shim for converting require('!shim...') statements
-*  into checks for existence of the global and conditional 
+*  into checks for existence of the global and conditional
 *  require-based usage of the shim
 * @example `browserify -t shimify main.js > bundle.js`
 * @param {string} file File name (NOT IN USE)
@@ -38,9 +38,9 @@ module.exports = function (file) {
     function End () {
         var pattern = "(^|\\s+|;)require\\(([\"'])shim!(.*?)([\"'])\\)\\s*"; // Back-references \\1 apparently not working in Node, so we make the second quote explicit
         this.queue(
-            data.replace( // A newline preceded by optional whitespace and some non-whitespace character needs a semicolon added (unless the character is a comma or semi-colon)
+            data.replace( // A newline preceded by optional whitespace and some non-whitespace character needs a semicolon added (unless the character is a comma or semi-colon); need to test with single line comments also
                 new RegExp(pattern, 'gm'), replacer) //
-                // ([^,;\s]\s*\n)   
+                // ([^,;\s]\s*\n)
 /*            ).replace(
                 new RegExp('(^|;)(' + pattern, 'g'), replacer.bind(null, '')
             )*/

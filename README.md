@@ -25,6 +25,11 @@ to create the object successfully, but it will not work properly if
 used in an older browser like IE7 which does not have nor utilize the
 Element prototype.
 
+Note that the shim plugin works in the browser by adding to the "window"
+property and in Node.js by adding to the "global" property (since a true
+shim should be available throughout one's code,
+allowing one to use well-understood semantics and syntax).
+
 # Examples
 
 ## Example 1
@@ -115,15 +120,42 @@ require(['writeBr', 'shims!Array@ArrayGenerics'], function (writeBr) {
 });
 ```
 
+# Configuration options
+
+`$baseUrl`: Set to a path such as "../shims". Defaults to "./shims" (a "shims" folder within the main baseUrl). If the path is suspected to have a protocol (by the presence of a colon character) or be an absolute path (by having a "/" at the beginning), the alias or path supplied with the `require([!shim...])` call will be appended along with ".js". Otherwise, the main config.baseUrl will be used and the shim $baseUrl appended to it.
+
+A trailing "/" is allowed but not required.
+
+`$pathDepth`: Set to "one" or "full" for an automatic file path namespacing; if set to "one", it will take the top-level parent object. For example, if the property is "Array.prototype.map" (e.g., `require(['shim!Array.prototype.map'])`) the shim plugin will look within a folder of the name "Array" for the file (as determined by $fileFormat which defaults to the full form, i.e., "Array.prototype.map.js") so it will look for a shim at "Array/Array.prototype.map.js".
+
+If set to "full", the automatic namespacing of the parent objects will be as deep as possible; using our previous example, it would lead to "Array/prototype/Array.prototype.map.js". One can leave off this property or set it to 'none' or 'default' to indicate no change from the default lack of automatic file path namespacing.
+
+If you already have a path prefix and apply this property, it will insert the automated path addition after your directory path. For example, if using `$pathDepth` set to "full" for `require(['shim!myShims/Array.prototype.map']);`, the resultant path would be: `myShims/Array/prototype/Array.prototype.map.js`.
+
+If an alias is set, this property will be ignored.
+
+`$fileFormat`: Must be set with `$pathDepth` to take effect. Set to "remainder", "full", or if $pathDepth is "full", it can also be set to "index". Defaults to "full". If set to "full", the file is expected to include the full object portion of the file name (e.g., "Array.prototype.map.js"). If set to "remainder", the file name should drop the previous paths automatically namespaced by the $pathDepth property. For example, if $pathDepth had been "full", a $fileFormat of "remainder" would cause the plugin to look for a file name "map.js", whereas if the $pathDepth had been "one", a $fileFormat of "remainder" would cause the plugin to look for a file name "prototype.map.js".
+
+If an alias is set, this property will be ignored.
+
 # Browserify
 
-For users of browserify, I have added a very simple browserify transforming plugin
-to convert require('!shim...') statements into checks for existence of the global and conditional
-require-based usage of the shim
+For users of browserify, I have added an overly simple and very experimental browserify
+transforming plugin to experiment with converting require('!shim...') statements into checks
+for existence of the global and conditional require-based usage of the shim (in a manner similar
+to that used for the AMD-style plugin that is the main focus of this repository).
 
-```browserify -t shimify main.js > bundle.js```
+This will allow one to use Node.js-style require statements of shim files in Node or the browser.
+But note that since Node does not recognize these statements either, the only way this can work
+currently is to "browserify" the code for Node usage as well! But in doing this, one must manually
+add a line such as `var self = typeof global === 'undefined' ? window : global;` to the top of the
+"browserified" file to have it work in Node as well as the browser.
 
-...which will convert:
+The following (while in the shim/browserify directory):
+
+```browserify -t ./generic-shimify main.js > bundle.js```
+
+...will convert:
 
 ```javascript
 // Currently requires separate requires for each shim (see below)
@@ -148,24 +180,6 @@ There are a number of shortcomings (pull requests welcome!):
 I would also like to add an option to strip `require('!shim...')'` entirely without disturbing line numbers (e.g., to use in browser (or Node) which doesn't need shim code loaded or checked) and an option to convert to a genuine require without first checking whether the global exists or not (e.g., for IE-only (conditional-comment-loaded) shim file where one knows that the global is missing).
 
 (I'd also like to make such an equivalent plugin for [AsYouWish](https://github.com/brettz9/asyouwish/wiki/Developer-Guidelines#requirejs-priv-plugin) to support another needed-in-the-browser-but-not-the-server need.)
-
-# Configuration options
-
-`$baseUrl`: Set to a path such as "../shims". Defaults to "./shims" (a "shims" folder within the main baseUrl). If the path is suspected to have a protocol (by the presence of a colon character) or be an absolute path (by having a "/" at the beginning), the alias or path supplied with the `require([!shim...])` call will be appended along with ".js". Otherwise, the main config.baseUrl will be used and the shim $baseUrl appended to it.
-
-A trailing "/" is allowed but not required.
-
-`$pathDepth`: Set to "one" or "full" for an automatic file path namespacing; if set to "one", it will take the top-level parent object. For example, if the property is "Array.prototype.map" (e.g., `require(['shim!Array.prototype.map'])`) the shim plugin will look within a folder of the name "Array" for the file (as determined by $fileFormat which defaults to the full form, i.e., "Array.prototype.map.js") so it will look for a shim at "Array/Array.prototype.map.js".
-
-If set to "full", the automatic namespacing of the parent objects will be as deep as possible; using our previous example, it would lead to "Array/prototype/Array.prototype.map.js". One can leave off this property or set it to 'none' or 'default' to indicate no change from the default lack of automatic file path namespacing.
-
-If you already have a path prefix and apply this property, it will insert the automated path addition after your directory path. For example, if using `$pathDepth` set to "full" for `require(['shim!myShims/Array.prototype.map']);`, the resultant path would be: `myShims/Array/prototype/Array.prototype.map.js`.
-
-If an alias is set, this property will be ignored.
-
-`$fileFormat`: Must be set with `$pathDepth` to take effect. Set to "remainder", "full", or if $pathDepth is "full", it can also be set to "index". Defaults to "full". If set to "full", the file is expected to include the full object portion of the file name (e.g., "Array.prototype.map.js"). If set to "remainder", the file name should drop the previous paths automatically namespaced by the $pathDepth property. For example, if $pathDepth had been "full", a $fileFormat of "remainder" would cause the plugin to look for a file name "map.js", whereas if the $pathDepth had been "one", a $fileFormat of "remainder" would cause the plugin to look for a file name "prototype.map.js".
-
-If an alias is set, this property will be ignored.
 
 # Todos
 
