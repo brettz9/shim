@@ -57,12 +57,23 @@ define(function () {
                 return true; // undefined or number (or xml) means appropriate detection doesn't exist at this level, so should not be considered
         }
     }
+    function _getFileFromModuleString (moduleStr) {
+        args = moduleStr.split('!'),
+        name = args[0],
+        methodChecks = args.slice(1),
+        ml = methodChecks.length,
+        multipleShimObject = !!ml, // Even if there is only a single trailing "!", this will still be true as the slice will add an empty string array element
+    }
     /**
      * This RequireJS shim plugin should only be used with shims supplying standard (or harmonizing of implementation-dependent) behavior as normal modules should not set globals
      * @exports shim
     */
     return {
-        load: function (nameStr, req, load, config) {
+        normalize: function (moduleStr, normalize) {
+            var file = _getFileFromModuleString(moduleStr);
+            return normalize(file);
+        },
+        load: function (moduleStr, req, load, config) {
             var i, prop, module, actualPath,
                 cfg = config.config,
                 // The following are, as with the typeCheck function and its dependent shims above, necessary as separate variables for the sake of multiple shims (though single shim code is employing them now also for convenience); the size of this file could be reduced if split back into shim/shims
@@ -70,11 +81,8 @@ define(function () {
                 canAvoidLoad = true,
                 shimCfg = cfg && cfg.shim,
                 objectToDetect = shimCfg && shimCfg.detect,
-                args = nameStr.split('!'),
-                name = args[0],
-                methodChecks = args.slice(1),
-                ml = methodChecks.length,
-                multipleShimObject = !!ml, // Even if there is only a single trailing "!", this will still be true as the slice will add an empty string array element
+                parsed = _getFileFromModuleString(moduleStr),
+                
                 // End multiple shim variables
                 w = typeof window === 'undefined' ? global : window,
                 ref = w,
