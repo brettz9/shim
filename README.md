@@ -107,11 +107,13 @@ file is reserved for standard methods.
 ```javascript
 require.config({
     config: {
-        detect : {
-            // If both of the following methods are present on Array,
-            //   the ArrayGenerics.js shim file will not be loaded as asserted
-            //   to be not needed
-            Array: ['slice', 'map']
+        shim: {
+            detect: {
+                // If both of the following methods are present on Array,
+                //   the ArrayGenerics.js shim file will not be loaded as asserted
+                //   to be not needed
+                Array: ['slice', 'map']
+            }
         }
     }
 });
@@ -122,7 +124,7 @@ require(['writeBr', 'shims!Array@ArrayGenerics'], function (writeBr) {
 
 # Configuration options
 
-`$baseUrl`: Set to a path such as "../shims". Defaults to "./shims" (a "shims" folder within the main baseUrl). If the path is suspected to have a protocol (by the presence of a colon character) or be an absolute path (by having a "/" at the beginning), the alias or path supplied with the `require([!shim...])` call will be appended along with ".js". Otherwise, the main config.baseUrl will be used and the shim $baseUrl appended to it.
+`$baseUrl`: Set to a path such as "../shims". If the path is suspected to have a protocol (by the presence of a colon character) or be an absolute path (by having a "/" at the beginning), the alias or path supplied with the `require([!shim...])` call will be appended along with ".js". Otherwise, the main config.baseUrl will be used and the shim $baseUrl appended to it. Defaults to "../jam" (i.e., a "jam" folder one level above the main baseUrl directory (your executing HTML file by default)) for the sake of easy compatibility with [Jam](jamjs.org/)-installed shim packages (while allowing the the default baseUrl, the executing HTML file, to reside (with its potential dependencies) in a cleanly-separated sibling folder). If your main file resides at root, you will need to change this value.
 
 A trailing "/" is allowed but not required.
 
@@ -183,7 +185,10 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 
 # Todos
 
-1. Merge shims into shim including alias/detection behavior (need to add a special character at end to get shims behavior?); configuration or other way to avoid creating namespace objects (e.g., if access could cause error or behavior like window.location?); ensure detection (as with generics) works on Node (with amdefine)
+1. Merge shims into shim including alias/detection behavior (need to add a special character at end to get shims behavior?); configuration or other way to avoid creating namespace objects (e.g., if access could cause error or behavior like window.location?); ensure detection (as with generics) works on Node (with amdefine); remove references in readme to old "shims"; indicate need in docs to use "!" at end
+1. Documentation on whether to return a value and/or set global, whether to check in the module or not, how to write to support non-AMD environment (Node or browser)
+1. Situation where want to always shim no matter the support or some other type checking (detect: true); any may to use markup?
+1. Do we want dependencies since most only required for testing?
 
 1. Support npm-constrained file name conversion (also in RequireJS - https://github.com/jrburke/requirejs/issues/846
  ?) since useful to host browser shims with npm for easy install but upper-case and dots are not allowed in the file names we use for auto-detection. (The plugin would probably also need to be changed to look inside the node_modules directory). Asked at https://github.com/isaacs/npm/issues/3105#issuecomment-22453074 for possible change. If not changeable the tilde might be the most URL-friendly symbol which isn't regularly used in file names.
@@ -196,3 +201,4 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 # Rejected ideas
 
 1. Apply autoNamepsace to aliases (using the path portion). While this might be convenient in some cases (e.g., to reference array generics in an Array folder without repeating "Array" in the alias portion), one should have the freedom to store them elsewhere (e.g., in a "generics" folder outside of the shim folder), and one might not expect changes to an alias anyways.
+1. Providing separate plugins for shims returning multiple shims versus single ones. It could admittedly reduce the file size by about half, especially shrinking size for the single shim, but I believe it is easier to avoid missing the new distinguishing mark of an exclamation mark at the end than it is to avoid missing a "shim!" vs. "shims!". It is also easier to maintain given their shared code, and adds some convenience to users to help them avoid installing an additional plugin.

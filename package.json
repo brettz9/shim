@@ -23,7 +23,8 @@
         "requirejs": "*",
         "amdefine": ">=0.0.8",
         "browserify": "*",
-        "through": "*"
+        "through": "*",
+        "jamjs": "*"
     },
     "license": "MIT",
     "engine": {
