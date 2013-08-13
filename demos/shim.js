@@ -49,7 +49,11 @@ define(function () {
                 return (_isArray(detect) ?
                     (_every.call(detect, function (method) {
                         return ref[method];
-                    })) : false // We'll treat "null" like false as well as any non-array objects since there should not be any further nested "detect" objects by the time this function is called
+                    })) :
+                    (detect.detect ?
+                        typeCheck(detect.detect, ref) :
+                        false // We'll treat "null" like false or any non-array objects without any nested "detect" objects
+                    )
                 );
             default:
                 return true; // undefined or number (or xml) means appropriate detection doesn't exist at this level, so should not be considered
@@ -178,7 +182,7 @@ define(function () {
                 if (canAvoidLoad) { // If not already required to load the shim, ensure other excluding criteria do not apply
                     // Give a chance for config to handle if user adds final trailing "!" and a relevant config object exists
                     if (objectToDetect && methodChecks[ml - 1] === '') {
-                        canAvoidLoad = typeCheck(objectToDetect.detect, ref); // Test against lowest level objectToDetect
+                        canAvoidLoad = typeCheck(objectToDetect, ref); // Test against lowest level objectToDetect
                     }
                     // If not already required to load the shim, ensure explicit checks are ok
                     for (i = 0; canAvoidLoad && i < ml; i++) { // Allow style "shim!Array!slice"
