@@ -6,40 +6,16 @@
 
 <script>
 /*globals require*/
-/*
-require.config({
-    config: {
-        shim : { // IMPORTANT: This "shim" property must be INSIDE the config property, not directly inside the config call!
-            detect: {
-                Array: {
-                    // 'prototype': 'map' // Can also use a string to indicate
-                    // method to check to allow all to be added (or require
-                    // shims!Array.prototype!map, though probably better
-                    // to avoid polluting the require code)
-                    prototype: function (obj) {
-                        'use strict';
-                        return obj.map;
-                    },
-                    // For objects already holding properties (as above), we
-                    //   can use "detect" also with a string, boolean, array, or
-                    //   function
-                    detect: ['slice', 'map']
-                }
-            }
-        }
-    }
-});
-*/
 
 require(['domReady!'], function () {
     'use strict';
 
     // We assume we can avoid addiitonal load of Array methods if map is already available
-    require(['writeBr', 'shim!Array.prototype!'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
+    require(['writeBr', 'shim!Array.prototype!map'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
         writeBr(alreadyExisted); // gives false in IE < 9, true in Firefox, etc.
         writeBr([3, 4, 5, 6].map(function (i) {return i > 4;})); // [false, false, true, true]
 
-        require(['writeBr', 'shim!Array@ArrayGenerics!'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
+        require(['writeBr', 'shim!Array@shimHelpers/ArrayGenerics!'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
             writeBr(alreadyExisted); // gives false in IE < 9, true in Firefox, etc.
             writeBr(Array.slice([3, 4, 5, 6], 2)); // [5, 6]
         });
