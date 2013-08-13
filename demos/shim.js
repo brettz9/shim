@@ -5,30 +5,31 @@ Todos:
 0. Test old detect code and canAvoidLoad is ok for multiple shims
 0. Test multiple shims/detection in browser and Node (with amdefine); support in SDK
 0. Ensure multiple shims work as needed with new shimConfig checks and actualPath/module definition (and that these are ok with jam, etc.)
+
 1. utilize config.isBuild (=== true) to know when being optimized and call load() without doing a require when in build mode to allow certain things to be done asynchronously (e.g., to avoid including modules for browsers that don't need shims?)
 multipleShimObject
 2. implement normalize()
-3. implement write(), onLayerEnd(), writeFile(), pluginBuilder?
+3. implement write(), onLayerEnd(), writeFile()? (with pluginBuilder to minimize this file's size); make common dependencies through define(['./common']...)?
 */
 define(function () {
     'use strict';
-    var _shimPattern = /^([^.]*?)([^\/.]*)(\..*)$/;
+    var _shimPattern = /^([^.]*?)([^\/.]*)(\..*)$/,
+        // Unlike with Array.isArray below which is small in size, a full Array.prototype.every implementation is not as compelling to take up with space here; for a full implementation, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
+        _every = Array.prototype.every || function (fun) {
+            var i, len = this.length;
+            for (i = 0; i < len; i++) {
+                if (!fun(this[i])) {
+                    return false;
+                }
+            }
+            return true;
+        };
 
     // In order to write clean code, we need two shims, 'Array.isArray' and 'Array.prototype.every', but unfortunately a recursive use of our own plugin does not work (despite these shims not needing to use themselves), so we have to define some shims inline/non-modularly here (but you don't have to!)
     if (!Array.isArray) {
         Array.isArray = function (o) {
             return {}.toString.call(o) === '[object Array]';
         };
-    }
-    // Unlike with Array.isArray, whose native version can offer greater protection against prototype overrides (and no doubt performance improvements) and is small in size, a full Array.prototype.every implementation is not as compelling to take up with space here; for a full implementation, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
-    function _every (arr, fun) {
-        var i, len = arr.length;
-        for (i = 0; i < len; i++) {
-            if (!fun(arr[i])) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -48,7 +49,7 @@ define(function () {
                 return !!detect(ref);
             case 'object':
                 return (Array.isArray(detect) ?
-                    (_every(detect, function (method) {
+                    (_every.call(detect, function (method) {
                         return ref[method];
                     })) : false // We'll treat "null" like false as well as any non-array objects since there should not be any further nested "detect" objects by the time this function is called
                 );
