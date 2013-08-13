@@ -13,7 +13,7 @@ multipleShimObject
 */
 define(function () {
     'use strict';
-    var _shimPattern = /^([^.]*?)([^\/.]*)(\..*)$/,
+    var _shimPattern = /^([^.]*?)([^\/.]*)(\..*)?$/, // 1. Allows slashes (but no dots); 2. Does not allow slashes or dots ; 3. A dot and everything else to the end of the line
         // In order to write clean code, we need shims for 'Array.isArray' and 'Array.prototype.every', but unfortunately a recursive use of our own plugin does not work (despite these shims not needing to use themselves), so we have to define some shims inline/non-modularly here (but you don't have to!)
 
         // Unlike with Array.isArray below which is small in size, a full Array.prototype.every implementation is not as compelling to take up with space here; for a full implementation, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
@@ -84,12 +84,12 @@ define(function () {
                     switch (shimConfig.fileFormat) {
                         case 'remainder': // ...Array/prototype.map.js
                             replacer = function (n0, n1, n2, n3) {
-                                return n1 + n2 + '/' + n3;
+                                return n1 + n2 + '/' + (n3 ? n3 : n2);
                             };
                             break;
                         case 'full': default: // ...Array/Array.prototype.map.js (recommended form)
                             replacer = function (n0, n1, n2, n3) {
-                                return n1 + n2 + '/' + n2 + n3;
+                                return n1 + n2 + '/' + n2 + (n3 || '');
                             };
                             break;
                     }
@@ -98,17 +98,17 @@ define(function () {
                     switch (shimConfig.fileFormat) {
                         case 'index': // ...Array/prototype/map/index.js
                             replacer = function (n0, n1, n2, n3) {
-                                return (n2 + n3).replace(/\./g, '/') + '/index';
+                                return (n2 + (n3 || '')).replace(/\./g, '/') + '/index';
                             };
                             break;
                         case 'remainder': // ...Array/prototype/map.js
                             replacer = function (n0, n1, n2, n3) {
-                                return (n2 + n3).replace(/\./g, '/');
+                                return (n2 + (n3 || '')).replace(/\./g, '/');
                             };
                             break;
                         case 'full': default: // ...Array/prototype/Array.prototype.map.js
                             replacer = function (n0, n1, n2, n3) {
-                                return (n2 + n3).replace(/\.[^.]*?$/, '') + '/' + n2 + n3;
+                                return (n2 + (n3 || '')).replace(/\.[^.]*?$/, '') + '/' + n2 + (n3 || '');
                             };
                             break;
                     }
@@ -118,7 +118,8 @@ define(function () {
                     break;
             }
         }
-        actualPath = path.replace(_shimPattern, replacer);
+
+        actualPath = alias ? path : path.replace(_shimPattern, replacer);
         resolvedPath = (
             (shimPathHasProtocol || shimAbsolutePath) ?
                 shimBaseUrl :

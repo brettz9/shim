@@ -15,9 +15,11 @@ require(['domReady!'], function () {
         writeBr([3, 4, 5, 6].map(function (i) {return i > 4;})); // [false, false, true, true]
 
         // We really shouldn't use the shim plugin to add non-standard properties, but we can demonstrate aliases this way.
-        require(['writeBr', 'shim!Array@shimHelpers/ArrayGenerics!'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
+        require(['writeBr', 'shim!Array@shimHelpers/ArrayGenerics!', 'shim!Array!'], function (writeBr, alreadyExisted, alreadyExisted2) { // No real need to use or specify the alreadyExisted arguments
             writeBr(alreadyExisted); // gives false in IE < 9, true in Firefox, etc.
             writeBr(Array.slice([3, 4, 5, 6], 2)); // [5, 6]
+            writeBr(alreadyExisted2); // gives false in IE < 9, true in Firefox, etc.
+            writeBr(Array.of(3, 4, 5, 6));
         });
     });
 

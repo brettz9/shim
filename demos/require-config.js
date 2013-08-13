@@ -29,7 +29,7 @@ require.config({
                     // For objects already holding properties (as above), we
                     //   can use "detect" also with a string, boolean, array, or
                     //   function
-                    detect: ['slice', 'map']
+                    detect: ['slice', 'map', 'of']
                 }
             }
         }
