@@ -1,8 +1,6 @@
 /*globals define*/
 // Array.slice.js
-define(['generics'], function (generics) {
+define(['shimHelpers/generics'], function (generics) {
     'use strict';
-    return function () {
-        return generics.getArrayGeneric('slice');
-    };
+    return generics.getArrayGeneric('slice');
 });
