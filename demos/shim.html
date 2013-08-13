@@ -22,8 +22,8 @@ require(['domReady!'], function () {
                 writeBr(alreadyExisted); // gives false in IE < 9, true in Firefox, etc.
                 writeBr([3, 4, 5, 6].map(function (i) {return i > 4;})); // [false, false, true, true]
 
-                // Todo: add test for alias within non-multiple example
-                require(['shim!Array@shimHelpers/ArrayGenerics!'], function (alreadyExisted) { // No real need to use or specify the alreadyExisted argument
+                // We really shouldn't use the shim plugin to add non-standard properties, but we can demonstrate aliases this way.
+                require(['shim!Array.slice@Array/Array.slice'], function (alreadyExisted) { // No real need to use or specify the alreadyExisted argument
                     writeBr(Array.slice([3, 4, 5, 6], 2)); // [5, 6]
                 });
             });
