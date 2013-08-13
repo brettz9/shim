@@ -57,95 +57,106 @@ define(function () {
                 return true; // undefined or number (or xml) means appropriate detection doesn't exist at this level, so should not be considered
         }
     }
-    function _getFileFromModuleString (moduleStr) {
-        args = moduleStr.split('!'),
-        name = args[0],
-        methodChecks = args.slice(1),
-        ml = methodChecks.length,
-        multipleShimObject = !!ml, // Even if there is only a single trailing "!", this will still be true as the slice will add an empty string array element
+    function _parseModuleString (moduleStr, config) {
+        var replacer, actualPath, resolvedPath,
+            args = moduleStr.split('!'),
+            name = args[0],
+            methodChecks = args.slice(1),
+            cfg = config.config,
+            shimCfg = cfg && cfg.shim,
+            shimConfig = shimCfg || {},
+            shimBaseUrl = (shimConfig.$baseUrl || 'jam').replace(/([^\/])$/, '$1/'), // We want this relative to the main module path (todo: see if https://github.com/jrburke/requirejs/issues/844 prompts support for separating the plugin baseUrl and module baseUrl, in which case use the module one)
+            aliased = name.split('@'),
+            alias = aliased[1],
+            path = aliased[0],
+            shimPathHasProtocol = shimBaseUrl.indexOf(':') > -1,
+            shimAbsolutePath = shimBaseUrl.charAt() === '/',
+            variable = alias ?
+                path : // No need to split up the path if an alias file is being used as the "path" should really just be properties
+                path.split('/').slice(-1)[0],
+            props = variable.split('.');
+        if (!alias) { // NOTE: If file size starts becoming a concern, we could scale back on the allowable values to just allow $pathDepth of "one" + $fileFormat of "full" (or revert back to a single autoNamespace variable); but this approach more flexibility to directory structure
+            // Using example, "shim!Array.prototype.map", transform later to the file path...
+            switch (shimConfig.$pathDepth) {
+                case 'one':
+                    switch (shimConfig.$fileFormat) {
+                        case 'remainder': // ...Array/prototype.map.js
+                            replacer = function (n0, n1, n2, n3) {
+                                return n1 + n2 + '/' + n3;
+                            };
+                            break;
+                        case 'full': default: // ...Array/Array.prototype.map.js (recommended form)
+                            replacer = function (n0, n1, n2, n3) {
+                                return n1 + n2 + '/' + n2 + n3;
+                            };
+                            break;
+                    }
+                    break;
+                case 'full':
+                    switch (shimConfig.$fileFormat) {
+                        case 'index': // ...Array/prototype/map/index.js
+                            replacer = function (n0, n1, n2, n3) {
+                                return (n2 + n3).replace(/\./g, '/') + '/index';
+                            };
+                            break;
+                        case 'remainder': // ...Array/prototype/map.js
+                            replacer = function (n0, n1, n2, n3) {
+                                return (n2 + n3).replace(/\./g, '/');
+                            };
+                            break;
+                        case 'full': default: // ...Array/prototype/Array.prototype.map.js
+                            replacer = function (n0, n1, n2, n3) {
+                                return (n2 + n3).replace(/\.[^.]*?$/, '') + '/' + n2 + n3;
+                            };
+                            break;
+                    }
+                    break;
+                case 'none': case 'default': default:
+                    // ...Array.prototype.map.js
+                    break;
+            }
+        }
+        actualPath = path.replace(_shimPattern, replacer);
+        resolvedPath = (
+            (shimPathHasProtocol || shimAbsolutePath) ?
+                shimBaseUrl :
+                config.baseUrl + // config.baseUrl gets a trailing slash auto-added
+                    shimBaseUrl
+        ) + (alias || actualPath) + (shimPathHasProtocol || shimAbsolutePath ? '.js' : '');
+        return {
+            resolvedPath: resolvedPath,
+            methodChecks: methodChecks,
+            props: props
+        };
     }
     /**
      * This RequireJS shim plugin should only be used with shims supplying standard (or harmonizing of implementation-dependent) behavior as normal modules should not set globals
+     * The typeCheck function and its dependent shims above, as well as other variables above and below were necessary for the sake of multiple shims (though single shim code is employing them now also for convenience); the size of this file could be reduced if split back into shim/shims, but more easily convenient, less convenient for user as separate package, and less easy to confuse between similar plugin names
      * @exports shim
     */
     return {
-        normalize: function (moduleStr, normalize) {
-            var file = _getFileFromModuleString(moduleStr);
-            return normalize(file);
+        /* see https://github.com/jrburke/requirejs/pull/847 on request to add config argument
+        normalize: function (moduleStr, normalize, config) {
+            var resolvedPath = _parseModuleString(moduleStr, config).resolvedPath;
+            return normalize(resolvedPath);
         },
+        */
         load: function (moduleStr, req, load, config) {
-            var i, prop, module, actualPath,
+            var i, prop,
                 cfg = config.config,
-                // The following are, as with the typeCheck function and its dependent shims above, necessary as separate variables for the sake of multiple shims (though single shim code is employing them now also for convenience); the size of this file could be reduced if split back into shim/shims
-                replacer, cb,
+                cb,
                 canAvoidLoad = true,
                 shimCfg = cfg && cfg.shim,
                 objectToDetect = shimCfg && shimCfg.detect,
-                parsed = _getFileFromModuleString(moduleStr),
-                
-                // End multiple shim variables
+                parsed = _parseModuleString(moduleStr, config),
+                resolvedPath = parsed.resolvedPath,
+                methodChecks = parsed.methodChecks,
+                ml = methodChecks.length,
+                multipleShimObject = !!ml, // Even if there is only a single trailing "!", this will still be true as the slice will add an empty string array element
+                props = parsed.props,
+                pl = props.length,
                 w = typeof window === 'undefined' ? global : window,
-                ref = w,
-                shimConfig = shimCfg || {},
-                shimBaseUrl = (shimConfig.$baseUrl || 'jam').replace(/([^\/])$/, '$1/'), // We want this relative to the main module path (todo: see if https://github.com/jrburke/requirejs/issues/844 prompts support for separating the plugin baseUrl and module baseUrl, in which case use the module one)
-                aliased = name.split('@'),
-                alias = aliased[1],
-                path = aliased[0],
-                shimPathHasProtocol = shimBaseUrl.indexOf(':') > -1,
-                shimAbsolutePath = shimBaseUrl.charAt() === '/',
-                variable = alias ?
-                    path : // No need to split up the path if an alias file is being used as the "path" should really just be properties
-                    path.split('/').slice(-1)[0],
-                props = variable.split('.'),
-                pl = props.length;
-            if (!alias) { // NOTE: If file size starts becoming a concern, we could scale back on the allowable values to just allow $pathDepth of "one" + $fileFormat of "full" (or revert back to a single autoNamespace variable); but this approach more flexibility to directory structure
-                // Using example, "shim!Array.prototype.map", transform later to the file path...
-                switch (shimConfig.$pathDepth) {
-                    case 'one':
-                        switch (shimConfig.$fileFormat) {
-                            case 'remainder': // ...Array/prototype.map.js
-                                replacer = function (n0, n1, n2, n3) {
-                                    return n1 + n2 + '/' + n3;
-                                };
-                                break;
-                            case 'full': default: // ...Array/Array.prototype.map.js (recommended form)
-                                replacer = function (n0, n1, n2, n3) {
-                                    return n1 + n2 + '/' + n2 + n3;
-                                };
-                                break;
-                        }
-                        break;
-                    case 'full':
-                        switch (shimConfig.$fileFormat) {
-                            case 'index': // ...Array/prototype/map/index.js
-                                replacer = function (n0, n1, n2, n3) {
-                                    return (n2 + n3).replace(/\./g, '/') + '/index';
-                                };
-                                break;
-                            case 'remainder': // ...Array/prototype/map.js
-                                replacer = function (n0, n1, n2, n3) {
-                                    return (n2 + n3).replace(/\./g, '/');
-                                };
-                                break;
-                            case 'full': default: // ...Array/prototype/Array.prototype.map.js
-                                replacer = function (n0, n1, n2, n3) {
-                                    return (n2 + n3).replace(/\.[^.]*?$/, '') + '/' + n2 + n3;
-                                };
-                                break;
-                        }
-                        break;
-                    case 'none': case 'default': default:
-                        // ...Array.prototype.map.js
-                        break;
-                }
-            }
-            actualPath = path.replace(_shimPattern, replacer);
-            module = (
-                (shimPathHasProtocol || shimAbsolutePath) ?
-                    shimBaseUrl :
-                    config.baseUrl + // config.baseUrl gets a trailing slash auto-added
-                        shimBaseUrl
-            ) + (alias || actualPath) + (shimPathHasProtocol || shimAbsolutePath ? '.js' : '');
+                ref = w;
 
             if (multipleShimObject) { // This code could be extracted back into its own plugin to minimize size in each, but it is convenient to just have one plugin to handle each case
                 for (i = 0; i < pl; i++) {
@@ -215,7 +226,7 @@ define(function () {
                 };
             }
 
-            req([module], cb);
+            req([resolvedPath], cb);
         }
     };
 });
