@@ -189,14 +189,13 @@ I would also like to add an option to strip `require('!shim...')'` entirely with
 1. Documentation on whether to return a value and/or set global, whether to check in the module or not, how to write to support non-AMD environment (Node or browser)
 1. Situation where want to always shim no matter the support or some other type checking (detect: true); any may to use markup?
 1. Do we want dependencies since most only required for testing?
+1. Clean-up readme with new info
+1. Add tests (browser and Node) for optimizer when done
+1. Work with optimizer to either ensure all shim files are included in case they are needed or made browser-specific (or relegate to IE conditional comments--a block which might be auto-built).
 
 1. Support npm-constrained file name conversion (also in RequireJS - https://github.com/jrburke/requirejs/issues/846
  ?) since useful to host browser shims with npm for easy install but upper-case and dots are not allowed in the file names we use for auto-detection. (The plugin would probably also need to be changed to look inside the node_modules directory). Asked at https://github.com/isaacs/npm/issues/3105#issuecomment-22453074 for possible change. If not changeable the tilde might be the most URL-friendly symbol which isn't regularly used in file names.
 1. Start populating shims at the polyfill wiki and explaining the approach/advantages (adapting structure for amd and also browserify/shimify plugin?) and npm (adapting file names)! (including latest Array.prototype.slice work or any other gist/desktop shim work) according to best cross-environment support; add to separate repo indicating strict rules so this plugin size can be small and itself modular?
-
-# Possible todos
-
-1. Work with optimizer to either ensure all shim files are included in case they are needed or made browser-specific (or relegate to IE conditional comments--a block which might be auto-built).
 
 # Rejected ideas
 
