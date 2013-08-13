@@ -15,8 +15,8 @@ else {
 requirer.config({
     config: {
         shim: {
-            $pathDepth: 'one',
-            $baseUrl: '../shims'
+            pathDepth: 'one',
+            baseUrl: '../shims'
         }
     }
 });
