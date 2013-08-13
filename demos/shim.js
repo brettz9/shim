@@ -14,6 +14,8 @@ multipleShimObject
 define(function () {
     'use strict';
     var _shimPattern = /^([^.]*?)([^\/.]*)(\..*)$/,
+        // In order to write clean code, we need shims for 'Array.isArray' and 'Array.prototype.every', but unfortunately a recursive use of our own plugin does not work (despite these shims not needing to use themselves), so we have to define some shims inline/non-modularly here (but you don't have to!)
+
         // Unlike with Array.isArray below which is small in size, a full Array.prototype.every implementation is not as compelling to take up with space here; for a full implementation, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
         _every = Array.prototype.every || function (fun) {
             var i, len = this.length;
@@ -23,14 +25,10 @@ define(function () {
                 }
             }
             return true;
+        },
+        _isArray = Array.isArray || function (o) {
+                return {}.toString.call(o) === '[object Array]';
         };
-
-    // In order to write clean code, we need two shims, 'Array.isArray' and 'Array.prototype.every', but unfortunately a recursive use of our own plugin does not work (despite these shims not needing to use themselves), so we have to define some shims inline/non-modularly here (but you don't have to!)
-    if (!Array.isArray) {
-        Array.isArray = function (o) {
-            return {}.toString.call(o) === '[object Array]';
-        };
-    }
 
     /**
     * Checks whether the supplied item to detect matches the supplied reference object
@@ -48,7 +46,7 @@ define(function () {
             case 'function':
                 return !!detect(ref);
             case 'object':
-                return (Array.isArray(detect) ?
+                return (_isArray(detect) ?
                     (_every.call(detect, function (method) {
                         return ref[method];
                     })) : false // We'll treat "null" like false as well as any non-array objects since there should not be any further nested "detect" objects by the time this function is called
