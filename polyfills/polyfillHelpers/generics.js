@@ -1,5 +1,14 @@
-/*globals define*/
-define(['shim!Array.from'], function () {
+/*globals define, require, module*/
+if (typeof define !== 'function') { // We need this as Node will make it here as it does not yet support this polyfill
+    var define = require('amdefine')(module);
+    var requirejs = require('requirejs');
+    requirejs.config({
+        paths: {polyfill: '../../demos/polyfill'},
+        baseUrl: __dirname,
+        nodeRequire: require
+    });
+}
+define(['polyfill!Array.from'], function () {
     'use strict';
     return {
         buildGeneric: function buildGeneric (method) {

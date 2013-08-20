@@ -1,5 +1,5 @@
 /*globals define, require, module*/
-if (typeof define !== 'function') { // We need this as Node will make it here as it does not yet support this shim
+if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 define(function () {

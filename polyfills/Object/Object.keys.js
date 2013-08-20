@@ -1,10 +1,10 @@
 /*globals define*/
-// As a shim plugin, this breaks normal modularity by altering globals for sake of enabling standards on non-supporting browsers
+// As a polyfill plugin, this breaks normal modularity by altering globals for sake of enabling standards on non-supporting browsers
 // Adapted from https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/keys
 define(function () {
     'use strict';
 
-    if (Object.keys) { // Better to use shim plugin to detect presence, as reusable for other shims
+    if (Object.keys) { // Better to use polyfill plugin to detect presence, as reusable for other polyfills
         return Object.keys;
     }
         

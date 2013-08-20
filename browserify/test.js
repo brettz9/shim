@@ -1,9 +1,9 @@
 var punycode = require('punycode'); // Normal require
 
-/* Shim requires */
+/* Polyfill requires */
 
-require('shim!Array.prototype.map'); // Could also be stripped by a better implementation
-require('shim!Array.of');
+require('polyfill!Array.prototype.map'); // Could also be stripped by a better implementation
+require('polyfill!Array.of');
 
 if (typeof window !== 'undefined') {
     console = {

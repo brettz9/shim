@@ -514,7 +514,7 @@ var self = typeof global === 'undefined' ? window : global; // One currently has
 },{}],2:[function(require,module,exports){
 (function(global){global.Array.of = function () {
     'use strict';
-    // Could use array generics shim instead, but
+    // Could use array generics polyfill instead, but
     //   bulky and not standard
     return Array.prototype.slice.call(arguments);
 };
@@ -555,10 +555,10 @@ global.Array.prototype.map = function map (callback, thisArg) {
 },{}],4:[function(require,module,exports){
 var punycode = require('punycode'); // Normal require
 
-/* Shim requires */
+/* Polyfill requires */
 
-!Array.prototype.map ? require('./shims/Array.prototype.map') : ''; // Could also be stripped by a better implementation
-typeof Array.of === 'undefined' ? require('./shims/Array.of') : '';
+!Array.prototype.map ? require('./polyfills/Array.prototype.map') : ''; // Could also be stripped by a better implementation
+typeof Array.of === 'undefined' ? require('./polyfills/Array.of') : '';
 
 if (typeof window !== 'undefined') {
     console = {
@@ -571,5 +571,5 @@ if (typeof window !== 'undefined') {
 console.log(Array.of(1, 2, 3).map(function (item) {
     return item + 3;
 }));
-},{"./shims/Array.of":2,"./shims/Array.prototype.map":3,"punycode":1}]},{},[4])
+},{"./polyfills/Array.of":2,"./polyfills/Array.prototype.map":3,"punycode":1}]},{},[4])
 ;

@@ -1,3 +1,5 @@
+/*globals global, require, requirer, requirejs */
+
 // Requires requirejs dependency (as specified in package.json) for Node usage; also works in browser
 
 // Set up regretttably-necessary boilerplate at top of pipeline (though could be in separate required config file) to set up AMD-implementation-independent and environment-independent requirer variable
@@ -13,20 +15,55 @@ else {
     window.requirer = requirejs;
 }
 requirer.config({
+    paths: {
+        polyfillHelpers: '../polyfills/polyfillHelpers'
+    },
     config: {
-        shim: {
+        polyfill: {
             pathDepth: 'one',
-            baseUrl: '../shims'
+            baseUrl: '../polyfills',
+            detect: {
+                Array: {
+                    // 'prototype': 'map' // Can also use a string to indicate
+                    // method to check to allow all to be added (or require
+                    // polyfills!Array.prototype!map, though probably better
+                    // to avoid polluting the require code)
+                    prototype: function (obj) {
+                        'use strict';
+                        return obj.map && obj.forEach;
+                    },
+                    // For objects already holding properties (as above), we
+                    //   can use "detect" also with a string, boolean, array, or
+                    //   function
+                    detect: ['slice', 'map', 'of']
+                }
+            }
         }
     }
 });
 
 requirer(['domReady!'], function () {
-
-requirer(['writeBr', 'shim!Array.of', 'shim!Array.prototype.map'], function (writeBr) {
+'use strict';
+requirer(['writeBr', 'polyfill!Array.of', 'polyfill!Array.prototype.map'], function (writeBr) {
     writeBr('hello world');
     writeBr(Array.of(3, 4, 5));
     writeBr([1, 2, 3].map(function (n) {return n + 5;}));
+    
+    
+    requirer(['writeBr', 'polyfill!Array.prototype!map'], function (writeBr, alreadyExisted) { // No real need to use or specify the alreadyExisted argument
+        writeBr(alreadyExisted); // always gives true now that has already been polyfilled
+        writeBr([3, 4, 5, 6].map(function (i) {return i > 4;})); // [false, false, true, true]
+
+        // We really shouldn't use the polyfill plugin to add non-standard properties, but we can demonstrate aliases this way.
+        requirer(['writeBr', 'polyfill!Array@polyfillHelpers/ArrayGenerics!', 'polyfill!Array!'], function (writeBr, alreadyExisted, alreadyExisted2) { // No real need to use or specify the alreadyExisted arguments
+            writeBr(alreadyExisted); // gives false in IE < 9, true in Firefox, etc.
+            writeBr(Array.slice([3, 4, 5, 6], 2)); // [5, 6]
+            writeBr(alreadyExisted2); // gives false in IE < 9, true in Firefox, etc.
+            writeBr(Array.of(3, 4, 5, 6));
+        });
+    });
+    
+    
 });
 
 });
