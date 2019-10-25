@@ -42,5 +42,4 @@ define(function () {
         }
         return result;
     };
-    return false;
 });
